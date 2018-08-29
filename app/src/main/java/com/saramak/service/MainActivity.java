@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,33 @@ public class MainActivity extends AppCompatActivity implements ServiceCallback {
     private Button bindButton;
     private Button unbindButton;
     private MyService service;
+    private CountDownTimer timerSS =  new CountDownTimer(Long.MAX_VALUE, 1000){
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            stausTextView2.setText(++j + " times");
+        }
+
+        @Override
+        public void onFinish() {
+
+        }
+    };
+    private CountDownTimer timerPR =  new CountDownTimer(Long.MAX_VALUE, 1000){
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            stausTextView3.setText(++k + " times");
+        }
+
+        @Override
+        public void onFinish() {
+
+        }
+    };
+    private TextView stausTextView2;
+    private TextView stausTextView3;
+    private int k =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements ServiceCallback {
         Log.d(TAG, "onCreate");
         startService(getServiceIntent());
         stausTextView = (TextView) findViewById(R.id.stats);
+        stausTextView2 = (TextView) findViewById(R.id.status2);
+        stausTextView3 = (TextView) findViewById(R.id.status3);
         stausTextView.setText("service " + service);
         connection = new MyServiceConnection(this);
         bindButton = (Button) findViewById(R.id.buttonBind);
@@ -58,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements ServiceCallback {
     }
 
     int i = 0;
+    int j = 0;
     @Override
     public void onConnected(MyService service) {
         this.service = service;
@@ -94,18 +125,21 @@ public class MainActivity extends AppCompatActivity implements ServiceCallback {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+        timerSS.start();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop");
+        timerSS.cancel();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause");
+        timerPR.cancel();
     }
 
     @Override
@@ -118,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements ServiceCallback {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        timerPR.start();
     }
 
     @Override
@@ -149,4 +184,5 @@ public class MainActivity extends AppCompatActivity implements ServiceCallback {
         Log.d(TAG, "onAttachedToWindow");
     }
 }
+
 
